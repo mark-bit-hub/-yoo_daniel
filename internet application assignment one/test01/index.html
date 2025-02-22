@@ -1,0 +1,141 @@
+ <?php
+session_start();
+include 'database.php'; // Include your database connection file
+
+if ($_SERVER["REQUEST_METHOD"s
+        $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username = :username");
+        $stmt->bindParam(':username', $username);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result && password_verify($password, $result['password'])) {
+            // Successful login
+            $_SESSION['user_id'] = $result['id'];
+            $_SESSION['username'] = $result['username'];
+            set_cookie("logged", "true", time() + 3600, "/");
+
+            header("Location: index.php");
+            exit();
+        } else {
+            $error_message = "Invalid username or password.";
+        }
+    } catch (PDOException $e) {
+        $error_message = "Database error: " . $e->getMessage();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emotional Intelligence Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .input-group input {
+            width: calc(100% - 22px);
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #4a90e2, #2c6ed5);
+            color: white;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, #357abd, #23527c);
+        }
+
+        .error-message {
+            color: #d9534f;
+            margin-top: 15px;
+        }
+
+        .about-ei {
+            margin-top: 30px;
+            text-align: left;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .about-ei h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .about-ei p {
+            line-height: 1.6;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Emotional Intelligence Portal</h2>
+        <?php if (inset($error_message)) : ?>
+            <p class="error-message"><?php echo $error_message; ?></p>
+        <?php endif; ?>
+        <form method="post" action="login.php">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter your username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+        </form>
+        <div class="about-ei">
+            <h3>Why Emotional Intelligence Matters</h3>
+            <p>Emotional intelligence (EI) is the ability to understand and manage your own emotions, and those of the people around you. It's crucial for effective communication, building strong relationships, and achieving personal and professional success.</p>
+            <p>This portal provides resources and tools to help you enhance your EI. Log in to access personalized assessments, training modules, and community forums.</p>
+        </div>
+    </div>
+</body>
+</html>
